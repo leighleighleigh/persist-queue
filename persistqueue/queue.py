@@ -233,7 +233,12 @@ class Queue(object):
         hnum, hcnt, _ = self.info['head']
         if [tnum, tcnt] >= [hnum, hcnt]:
             return None
-        data = self.serializer.load(self.tailf)
+        try:
+            data = self.serializer.load(self.tailf)
+        except:
+            log.error("Failed to load data from tail file, it is likely corrupt.")
+            data = None
+
         toffset = self.tailf.tell()
         tcnt += 1
         if tcnt == self.info['chunksize'] and tnum <= hnum:
